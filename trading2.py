@@ -14,7 +14,7 @@ from secrets import IEX_TEST_API_TOKEN as TOKEN
 
 PORTFOLIO_SIZE = 10000000
 TOP_XX_STOCKS = 50
-MY_COLUMNS = ['Ticker', 'Stock Price', 'One-Year Return', 'Number of Shares to Buy']
+MY_COLUMNS = ['Ticker', 'Company Name', 'Stock Price', 'One-Year Return', 'Number of Shares to Buy']
 
 def fetch_data():
     stocks = pd.read_csv('sp_500_stocks.csv')
@@ -38,6 +38,7 @@ def fetch_data():
                     pd.Series(
                         [
                             symbol,
+                            name,
                             stock_price,
                             yearChange,
                             shares_to_buy
@@ -73,6 +74,14 @@ def createExcel(final_dataframe):
         }
     )
 
+    string_name_format = writer.book.add_format(
+        {
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1
+        }
+    )
+
     dollar_format = writer.book.add_format(
         {
             'num_format': '$0.00',
@@ -93,7 +102,7 @@ def createExcel(final_dataframe):
 
     percent_format = writer.book.add_format(
         {
-            'num_format': '0.00',
+            'num_format': '0.00%',
             'font_color': font_color,
             'bg_color': background_color,
             'border': 1
@@ -102,9 +111,10 @@ def createExcel(final_dataframe):
 
     column_formats = {
         'A': ['Ticker', string_format],
-        'B': ['Stock Price', dollar_format],
-        'C': ['One-Year Return', percent_format],
-        'D': ['Number of Shares to Buy', integer_format],
+        'B': ['Company Name', string_format],
+        'C': ['Stock Price', dollar_format],
+        'D': ['One-Year Return', percent_format],
+        'E': ['Number of Shares to Buy', integer_format],
     }
 
     for column in column_formats.keys():
